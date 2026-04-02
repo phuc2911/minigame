@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tham gia — __ORG__</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <!-- ═══════════════════════════════════════════ -->
+    <!--  SCREEN 1: JOIN                             -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div id="screen-join" class="screen">
+      <nav class="navbar">
+        <div class="logo">
+          <img
+            data-cfg="logo"
+            src="images/Viettel Networks-white.png"
+            alt="Logo"
+            class="logo-img"
+          />
+        </div>
+        <a
+          href="index.html"
+          class="btn btn-ghost_v2 btn-sm"
+          onclick="clearEmployeeSession()"
+        >← Thoát</a>
+      </nav>
+
+      <div style="text-align: center; padding: 100px 0 4px">
+        <div style="font-size: 4rem" data-cfg="event">💕Minigame💕</div>
+        <h2 style="margin: 4px 0 2px" data-cfg="org">Viettel Network</h2>
+        <p
+          class="tagline"
+          style="font-size: 0.95rem; margin: 0"
+          data-cfg="slogan"
+        >
+          Slogan
+        </p>
+      </div>
+
+      <div
+        style="
+          flex: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 24px;
+        "
+      >
+        <div
+          style="
+            width: 100%;
+            max-width: 420px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+          "
+        >
+          <!-- Thẻ thông tin nhân viên (ẩn đến khi load xong) -->
+          <div
+            id="emp-card"
+            style="
+              background: rgba(38, 137, 12, 0.15);
+              border: 1px solid #26890c;
+              border-radius: 14px;
+              padding: 14px 18px;
+              text-align: center;
+              display: none;
+            "
+          >
+            <div style="font-size: 0.8rem; opacity: 0.7; margin-bottom: 4px">
+              Đang tham gia với tư cách
+            </div>
+            <div
+              style="font-size: 1.15rem; font-weight: 700"
+              id="emp-card-name"
+            >
+              —
+            </div>
+            <div
+              style="font-size: 0.85rem; opacity: 0.75; margin-top: 2px"
+              id="emp-card-dept"
+            ></div>
+          </div>
+
+          <!-- Cảnh báo chưa đăng nhập -->
+          <div
+            id="no-session-warn"
+            style="
+              background: rgba(226, 27, 60, 0.15);
+              border: 1px solid #e21b3c;
+              border-radius: 14px;
+              padding: 14px 18px;
+              text-align: center;
+              display: none;
+            "
+          >
+            <div style="font-size: 1.5rem; margin-bottom: 6px">🔐</div>
+            <div style="font-weight: 600; margin-bottom: 8px">
+              Bạn chưa đăng nhập!
+            </div>
+            <a href="index.html" class="btn btn-primary btn-sm"
+              >Đăng nhập ngay</a
+            >
+          </div>
+
+          <div class="form-group" style="gap: 10px" id="join-form">
+            <div style="text-align: center">
+              <p style="opacity: 0.7; margin: 0">
+                Nhập mã PIN được gửi qua NetChat
+              </p>
+            </div>
+            <input
+              id="input-pin"
+              type="tel"
+              class="input"
+              placeholder="Mã PIN (6 chữ số)"
+              maxlength="6"
+              inputmode="numeric"
+              style="
+                text-align: center;
+                font-size: 2rem;
+                font-weight: 900;
+                letter-spacing: 4px;
+              "
+            />
+          </div>
+
+          <div
+            id="join-error"
+            style="
+              color: #ff6b6b;
+              text-align: center;
+              font-weight: 600;
+              display: none;
+            "
+          ></div>
+
+          <button
+            id="btn-join"
+            class="btn btn-primary btn-lg btn-block"
+            onclick="joinGame()"
+          >
+            Tham gia →
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!--  SCREEN 2: LOBBY (waiting for start)        -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div id="screen-lobby" class="screen hidden">
+      <div
+        style="
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 24px;
+          gap: 24px;
+          text-align: center;
+        "
+      >
+        <div style="font-size: 3rem">👋</div>
+        <h2>Bạn đã ghi danh!</h2>
+        <div style="font-size: 4rem" data-cfg="event">💕Minigame💕</div>
+        <div
+          class="player-chip"
+          style="font-size: 1.4rem; padding: 14px 32px"
+          id="player-name-display"
+        >
+          Tên
+        </div>
+        <div
+          id="player-dept-display"
+          class="player-chip"
+          style="display: none"
+        ></div>
+        <div class="player-chip">
+          👥 <span id="lobby-count">0</span> CBNV tham gia
+        </div>
+        <p style="opacity: 0.7">Đang chờ host bắt đầu chương trình...</p>
+        <div style="display: flex; gap: 8px">
+          <div class="pulse-dot"></div>
+          <div class="pulse-dot"></div>
+          <div class="pulse-dot"></div>
+        </div>
+        <div
+          id="lobby-players-play"
+          class="player-list"
+          style="max-width: 500px"
+        ></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!--  SCREEN 2b: STARTING COUNTDOWN              -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div id="screen-starting" class="screen hidden">
+      <div
+        style="
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 16px;
+          text-align: center;
+        "
+      >
+        <h1>Game bắt đầu!</h1>
+        <div
+          style="
+            font-size: 5rem;
+            font-weight: 900;
+            color: #ffd700;
+            animation: pulse 1s ease infinite;
+          "
+          id="countdown-num"
+        >
+          3
+        </div>
+        <p style="opacity: 0.7">Chuẩn bị sẵn sàng...</p>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!--  SCREEN 3: QUESTION                         -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div id="screen-question" class="screen hidden">
+      <div class="question-header">
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+          "
+        >
+          <div class="question-meta" id="q-meta">Câu 1/5</div>
+          <div class="timer-circle" id="q-timer">20</div>
+          <div class="score-badge">⭐ <span id="q-my-score">0</span></div>
+        </div>
+        <div class="timer-bar-wrap">
+          <div id="q-timer-bar" class="timer-bar"></div>
+        </div>
+      </div>
+      <div
+        style="
+          padding: 16px;
+          text-align: center;
+          background: rgba(0, 0, 0, 0.2);
+        "
+      >
+        <div id="q-question-text" class="question-text"></div>
+      </div>
+      <div
+        id="q-answers"
+        class="answer-grid"
+        style="flex: 1; align-content: center"
+      ></div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!--  SCREEN 4: WAITING AFTER ANSWER             -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div id="screen-waiting" class="screen hidden">
+      <div
+        style="
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 20px;
+          text-align: center;
+          padding: 24px;
+        "
+      >
+        <div style="font-size: 3rem" id="waiting-icon">🔒</div>
+        <h2 id="waiting-text">Đã chốt câu trả lời!</h2>
+        <p style="opacity: 0.7">Đang chờ kết quả...</p>
+        <div style="display: flex; gap: 8px">
+          <div class="pulse-dot"></div>
+          <div class="pulse-dot"></div>
+          <div class="pulse-dot"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!--  SCREEN 5: RESULT                           -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div id="screen-result" class="screen hidden">
+      <div
+        style="
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 24px;
+          gap: 20px;
+        "
+      >
+        <div class="result-card" style="width: 100%; max-width: 440px">
+          <div class="result-icon" id="result-icon">🎯</div>
+          <h2 id="result-title">Đúng rồi!</h2>
+          <div class="result-points" id="result-points">+1000</div>
+          <div class="result-streak" id="result-streak"></div>
+        </div>
+        <div
+          class="card"
+          style="width: 100%; max-width: 440px; text-align: center"
+        >
+          <div style="opacity: 0.7; margin-bottom: 4px">Tổng điểm của bạn</div>
+          <div
+            style="font-size: 2.5rem; font-weight: 900; color: #ffd700"
+            id="result-total-score"
+          >
+            0
+          </div>
+          <div style="opacity: 0.7; margin-top: 4px" id="result-rank"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!--  SCREEN 6: BETWEEN-QUESTION LEADERBOARD     -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div id="screen-leaderboard" class="screen hidden">
+      <div
+        style="
+          flex: 1;
+          padding: 24px;
+          max-width: 600px;
+          margin: 0 auto;
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        "
+      >
+        <h2 style="text-align: center">🏆 Bảng xếp hạng</h2>
+        <div id="play-leaderboard" class="leaderboard"></div>
+        <p style="text-align: center; opacity: 0.6; font-size: 0.9rem">
+          Đang chờ câu tiếp theo...
+        </p>
+        <div style="display: flex; gap: 8px; justify-content: center">
+          <div class="pulse-dot"></div>
+          <div class="pulse-dot"></div>
+          <div class="pulse-dot"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!--  SCREEN 7: GAME OVER                        -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div id="screen-gameover" class="screen hidden">
+      <div id="confetti-wrap-play" class="confetti-wrap"></div>
+      <div
+        style="
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 32px;
+          gap: 20px;
+          text-align: center;
+        "
+      >
+        <div style="font-size: 3rem">🎉</div>
+        <h1 data-cfg="event">💕Minigame💕</h1>
+        <h2>đã kết thúc!</h2>
+        <div
+          id="play-result-banner"
+          style="font-size: 1.1rem; opacity: 0.85"
+        ></div>
+        <div
+          style="
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            width: 100%;
+            max-width: 800px;
+          "
+        >
+          <div class="card" style="text-align: left">
+            <h3 style="margin-bottom: 10px">🏆 Cá nhân</h3>
+            <div id="play-final-leaderboard" class="leaderboard"></div>
+          </div>
+          <div class="card" style="text-align: left">
+            <h3 style="margin-bottom: 10px">🏢 Theo đơn vị</h3>
+            <div id="play-dept-leaderboard" class="leaderboard"></div>
+          </div>
+        </div>
+        <a href="index.html" class="btn btn-primary btn-lg" style="margin-top: 8px" onclick="clearEmployeeSession()">Về trang chủ</a>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!--  SCREEN: HOST LEFT                          -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div id="screen-host-left" class="screen hidden">
+      <div
+        style="
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 16px;
+          text-align: center;
+          padding: 24px;
+        "
+      >
+        <div style="font-size: 3rem">😢</div>
+        <h2>Host đã rời game</h2>
+        <p style="opacity: 0.7">Game kết thúc vì host mất kết nối.</p>
+        <a href="index.html" class="btn btn-primary btn-lg" onclick="clearEmployeeSession()">Về trang chủ</a>
+      </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/play.js"></script>
+  </body>
+</html>

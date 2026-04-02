@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Host — __ORG__</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <!-- ═══════════════════════════════════════════ -->
+    <!--  SCREEN 1: QUIZ BUILDER                     -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div id="screen-build" class="screen">
+      <nav class="navbar">
+        <div class="logo">
+          <img data-cfg="logo" src="images/Viettel Networks-white.png" alt="Viettel Network" class="logo-img" />
+          <span style="font-size:0.9rem;opacity:0.6"></span>
+        </div>
+        <a
+          href="index.html"
+          class="btn btn-ghost_v2 btn-sm"
+          onclick="clearEmployeeSession()"
+        >← Thoát</a>
+      </nav>
+
+      <div class="builder-layout">
+        <!-- Left: Question Form -->
+        <div>
+          <div class="card" style="margin-bottom:20px">
+            <h2 style="margin-bottom:16px">❓Thêm câu hỏi</h2>
+
+            <div class="form-group">
+              <label class="form-label">Câu hỏi</label>
+              <input id="q-text" type="text" class="input-dark" placeholder="Nhập câu hỏi của bạn..." maxlength="200" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">4 lựa chọn (chọn đáp án đúng bên phải)</label>
+              <div id="options-container" class="options-grid"></div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+              <div class="form-group" style="margin-bottom:0">
+                <label class="form-label">Thời gian (giây)</label>
+                <select id="q-time" class="select-dark">
+                  <option value="5">5s</option>
+                  <option value="10">10s</option>
+                  <option value="20" selected>20s</option>
+                  <option value="30">30s</option>
+                  <option value="60">60s</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin-bottom:0">
+                <label class="form-label">Điểm tối đa</label>
+                <select id="q-points" class="select-dark">
+                  <option value="500">500</option>
+                  <option value="1000" selected>1000</option>
+                  <option value="2000">2000</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="build-error" style="color:#ff6b6b;font-size:0.88rem;margin-bottom:10px;display:none"></div>
+
+            <button class="btn btn-purple btn-block" onclick="addQuestion()">Thêm câu hỏi</button>
+          </div>
+
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <!-- <button class="btn btn-green btn-sm" onclick="loadFromNHCH()">📥 Tải từ NHCH</button> -->
+            <label class="btn btn-purple btn-sm" style="cursor:pointer" title="Import câu hỏi từ file Excel NHCH.xlsx">
+              📂 Import Excel
+              <input type="file" id="excel-upload" accept=".xlsx,.xls" style="display:none" onchange="importFromExcel(this)" />
+            </label>
+            <button class="btn btn-ghost btn-sm" onclick="loadSampleQuiz()">📋 Quiz mẫu</button>
+            <button class="btn btn-ghost btn-sm" onclick="clearQuestions()">🗑️ Xóa hết</button>
+          </div>
+          <div id="import-status" style="font-size:0.85rem;margin-top:6px;display:none"></div>
+          <div style="font-size:0.78rem;opacity:0.5;margin-top:8px;line-height:1.5">
+            💡 File Excel hỗ trợ cột: <strong>câu hỏi</strong>, <strong>đáp án đúng</strong>, <strong>phương án 1–4</strong>,
+            và tùy chọn: <strong>thời gian</strong> (giây), <strong>điểm</strong>
+          </div>
+        </div>
+
+        <!-- Right: Question List + Start -->
+        <div>
+          <div class="card" style="margin-bottom:16px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+              <h3>Danh sách câu hỏi</h3>
+              <span id="q-count-badge" class="player-chip" style="font-size:0.85rem">0 câu</span>
+            </div>
+            <div id="question-list" class="question-list">
+              <div style="text-align:center;opacity:0.5;padding:24px">Chưa có câu hỏi nào</div>
+            </div>
+          </div>
+
+          <button id="btn-host-game" class="btn btn-green btn-lg btn-block" onclick="hostGame()" disabled>
+            🚀 Host Game
+          </button>
+          <div style="text-align:center;opacity:0.6;font-size:0.82rem;margin-top:8px">
+            Cần ít nhất 1 câu hỏi để bắt đầu
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!--  SCREEN 2: LOBBY                            -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div id="screen-lobby" class="screen hidden">
+      <nav class="navbar">
+        <div class="logo">
+          <img data-cfg="logo" src="images/Viettel Networks-white.png" alt="Viettel Network" class="logo-img" />
+        </div>
+        <div id="lobby-q-info" style="font-size:0.9rem;opacity:0.7"></div>
+      </nav>
+
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;gap:24px;text-align:center">
+        <h2>Tham gia tại</h2>
+        <div class="pin-display">
+          <div class="pin-label">Game PIN</div>
+          <div id="pin-display" class="pin-number">------</div>
+        </div>
+        <p style="opacity:0.7">Vào trang chủ và nhập mã PIN</p>
+
+        <div class="player-chip">👥 <span id="lobby-count">0</span> người chơi đã vào</div>
+        <div id="lobby-players" class="player-list" style="max-width:600px"></div>
+
+        <button id="btn-start" class="btn btn-green btn-lg" onclick="startGame()" disabled>▶ Bắt đầu Game</button>
+        <p style="opacity:0.5;font-size:0.85rem" id="start-hint">Cần ít nhất 1 người chơi</p>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!--  SCREEN 3: GAME — QUESTION                  -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div id="screen-game" class="screen hidden">
+      <div class="question-header">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <div class="question-meta" id="host-q-meta">Câu 1/5</div>
+          <div class="timer-circle" id="host-timer">20</div>
+          <div id="host-points-badge" class="player-chip" style="font-size:0.85rem">⭐ 1000</div>
+        </div>
+        <div class="timer-bar-wrap"><div id="host-timer-bar" class="timer-bar"></div></div>
+      </div>
+
+      <div class="host-game-layout">
+        <div class="card" style="text-align:center;padding:32px">
+          <div id="host-question-text" class="question-text" style="margin-bottom:0"></div>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:16px">
+          <div>
+            <div style="opacity:0.7;font-size:0.9rem;margin-bottom:4px">Đã trả lời</div>
+            <div class="answer-count-display">
+              <span id="answers-in">0</span>/<span id="answers-total">0</span>
+            </div>
+          </div>
+          <button class="btn btn-yellow btn-lg" onclick="showResults()">Xem kết quả</button>
+        </div>
+
+        <div id="host-answer-preview" class="answer-grid" style="grid-template-columns:1fr 1fr;gap:10px"></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!--  SCREEN 4: QUESTION RESULTS                 -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div id="screen-results" class="screen hidden">
+      <nav class="navbar">
+        <div class="logo">Kết quả</div>
+      </nav>
+
+      <div style="flex:1;padding:24px;max-width:900px;margin:0 auto;width:100%;display:flex;flex-direction:column;gap:24px">
+        <div class="card">
+          <h3 style="margin-bottom:14px">📊 Phân bố câu trả lời</h3>
+          <div id="answer-bars" class="answer-bar-wrap"></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div class="card">
+            <h3 style="margin-bottom:14px">🏆 Xếp hạng cá nhân</h3>
+            <div id="host-leaderboard" class="leaderboard"></div>
+          </div>
+          <div class="card">
+            <h3 style="margin-bottom:14px">🏢 Xếp hạng theo đơn vị</h3>
+            <div id="host-dept-leaderboard" class="leaderboard"></div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:12px;justify-content:center">
+          <button id="btn-next-q" class="btn btn-green btn-lg" onclick="nextQuestion()">▶ Câu tiếp theo</button>
+          <button class="btn btn-red btn-lg" onclick="endGame()">⏹ Kết thúc</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!--  SCREEN 5: GAME OVER                        -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div id="screen-gameover" class="screen hidden">
+      <div id="confetti-wrap" class="confetti-wrap"></div>
+      <nav class="navbar">
+        <div class="logo">
+          <img data-cfg="logo" src="images/Viettel Networks-white.png" alt="Viettel Network" class="logo-img" />
+        </div>
+        <a href="index.html" class="btn btn-ghost_v2 btn-sm" onclick="clearEmployeeSession()">Về trang chủ</a>
+      </nav>
+
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;padding:32px;gap:24px">
+        <h1>🏆 Kết quả cuối cùng 🏆</h1>
+        <div style="font-size: 4rem" data-cfg="event">💕Minigame💕</div>
+        <div id="winner-banner" style="text-align:center;padding:20px"></div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;width:100%;max-width:900px">
+          <div class="card">
+            <h3 style="margin-bottom:12px">🏆 Cá nhân</h3>
+            <div id="final-leaderboard" class="leaderboard"></div>
+          </div>
+          <div class="card">
+            <h3 style="margin-bottom:12px">🏢 Theo đơn vị</h3>
+            <div id="final-dept-leaderboard" class="leaderboard"></div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:8px">
+          <button class="btn btn-green btn-lg" onclick="exportResults()">
+            📥 Xuất kết quả
+          <!-- </button>
+          <a href="index.html" class="btn btn-primary btn-lg">Hẹn gặp lại!</a> -->
+        </div>
+      </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/host.js"></script>
+  </body>
+</html>
