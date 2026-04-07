@@ -237,14 +237,15 @@
       function renderMenuActions(emp) {
         clearInterval(_countdownInterval);
         const actions = document.getElementById("menu-actions");
-        const startTime = APP_CONFIG.eventStartTime
-          ? new Date(APP_CONFIG.eventStartTime)
-          : null;
+
+        // Luôn đọc lại config mới nhất (bao gồm host đã lưu)
+        const cfg = getEffectiveConfig();
+        const startTime = cfg.eventStartTime ? new Date(cfg.eventStartTime) : null;
 
         if (startTime && Date.now() < startTime.getTime()) {
           // Chưa đến giờ — hiện đếm ngược
           actions.innerHTML = `
-            <p style="opacity:0.75;font-size:1rem;margin:0;text-align:center"></p>
+            <p style="opacity:0.75;font-size:1rem;margin:0;text-align:center">⏳ Chưa đến thời gian diễn ra chương trình</p>
             <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;
               background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);
               border-radius:16px;padding:20px 28px;">
@@ -271,7 +272,9 @@
             ${emp.isAdmin ? `<a href="host.html" class="btn btn-primary btn-lg">🎮 Host Game</a>` : ""}`;
 
           function tick() {
-            const diff = startTime.getTime() - Date.now();
+            // Đọc lại startTime mỗi tick để phản ánh khi host thay đổi
+            const latestStart = new Date(getEffectiveConfig().eventStartTime);
+            const diff = latestStart.getTime() - Date.now();
             if (diff <= 0) {
               clearInterval(_countdownInterval);
               renderMenuActions(emp);
@@ -281,23 +284,15 @@
             const h = Math.floor((diff % 86400000) / 3600000);
             const m = Math.floor((diff % 3600000) / 60000);
             const s = Math.floor((diff % 60000) / 1000);
-            document.getElementById("cd-days").textContent = String(d).padStart(
-              2,
-              "0",
-            );
-            document.getElementById("cd-hours").textContent = String(
-              h,
-            ).padStart(2, "0");
-            document.getElementById("cd-minutes").textContent = String(
-              m,
-            ).padStart(2, "0");
-            document.getElementById("cd-seconds").textContent = String(
-              s,
-            ).padStart(2, "0");
+            document.getElementById("cd-days").textContent    = String(d).padStart(2, "0");
+            document.getElementById("cd-hours").textContent   = String(h).padStart(2, "0");
+            document.getElementById("cd-minutes").textContent = String(m).padStart(2, "0");
+            document.getElementById("cd-seconds").textContent = String(s).padStart(2, "0");
           }
 
           tick();
           _countdownInterval = setInterval(tick, 1000);
+
         } else {
           // Đã đến giờ — hiện nút bình thường
           if (emp.isAdmin) {
@@ -310,6 +305,20 @@
           }
         }
       }
+
+      // Khi host thay đổi config từ tab khác → re-render ngay
+      window.addEventListener("storage", (e) => {
+        if (e.key !== "vn_event_config") return;
+        const menuScreen = document.getElementById("screen-menu");
+        if (menuScreen.classList.contains("hidden")) return;
+        const saved = localStorage.getItem("vn_employee");
+        if (!saved) return;
+        try {
+          const emp = JSON.parse(saved);
+          applyAppConfig();       // cập nhật tên/slogan trên trang
+          renderMenuActions(emp); // cập nhật countdown / nút
+        } catch {}
+      });
     </script>
   </body>
 </html>

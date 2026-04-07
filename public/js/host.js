@@ -736,6 +736,56 @@ function launchConfetti() {
   }, 5000);
 }
 
+// ─── CẤU HÌNH SỰ KIỆN (host chỉnh, lưu localStorage) ───────
+
+function loadEventConfigToForm() {
+  const cfg = getEffectiveConfig();
+  document.getElementById("cfg-title").value     = cfg.eventTitle || "";
+  document.getElementById("cfg-slogan").value    = cfg.slogan     || "";
+  document.getElementById("cfg-subtext").value   = cfg.subtext    || "";
+  // datetime-local cần format "YYYY-MM-DDTHH:MM"
+  if (cfg.eventStartTime) {
+    document.getElementById("cfg-starttime").value =
+      cfg.eventStartTime.slice(0, 16);
+  }
+}
+
+function saveEventConfig() {
+  const title     = document.getElementById("cfg-title").value.trim();
+  const slogan    = document.getElementById("cfg-slogan").value.trim();
+  const subtext   = document.getElementById("cfg-subtext").value.trim();
+  const startRaw  = document.getElementById("cfg-starttime").value;
+
+  const patch = {};
+  if (title)    patch.eventTitle     = title;
+  if (slogan)   patch.slogan         = slogan;
+  if (subtext)  patch.subtext        = subtext;
+  if (startRaw) patch.eventStartTime = startRaw + ":00"; // thêm giây
+
+  localStorage.setItem(EVENT_CONFIG_KEY, JSON.stringify(patch));
+  applyAppConfig();   // áp dụng ngay trên trang host
+
+  const st = document.getElementById("cfg-status");
+  st.style.display = "block";
+  st.style.color   = "#26890c";
+  st.textContent   = "✓ Đã lưu! Tất cả màn hình sẽ cập nhật theo.";
+  setTimeout(() => { st.style.display = "none"; }, 3000);
+}
+
+function resetEventConfig() {
+  if (!confirm("Xóa cấu hình đã lưu và về mặc định trong config.js?")) return;
+  localStorage.removeItem(EVENT_CONFIG_KEY);
+  applyAppConfig();
+  loadEventConfigToForm();
+
+  const st = document.getElementById("cfg-status");
+  st.style.display = "block";
+  st.style.color   = "#aaa";
+  st.textContent   = "Đã về mặc định.";
+  setTimeout(() => { st.style.display = "none"; }, 2500);
+}
+
 // ─── INIT ───────────────────────────────────────────────────
 renderOptionFields();
 renderQuestionList();
+loadEventConfigToForm();

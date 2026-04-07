@@ -11,12 +11,24 @@ const APP_CONFIG = {
   logoAlt: "Viettel Network",
   // Thời gian bắt đầu sự kiện — định dạng: "YYYY-MM-DDTHH:MM:SS"
   // Đặt null hoặc xóa dòng này để luôn hiển thị nút tham gia
-  eventStartTime: "2026-04-02T08:00:00",
+  eventStartTime: "2026-04-08T08:00:00",
 };
+
+const EVENT_CONFIG_KEY = "vn_event_config";
+
+// Lấy config hiện tại: merge default + host đã lưu (nếu có)
+function getEffectiveConfig() {
+  const base = Object.assign({}, APP_CONFIG);
+  try {
+    const saved = localStorage.getItem(EVENT_CONFIG_KEY);
+    if (saved) Object.assign(base, JSON.parse(saved));
+  } catch {}
+  return base;
+}
 
 // Gọi hàm này sau khi DOM sẵn sàng để điền tự động vào các phần tử có data-cfg-*
 function applyAppConfig(cfg) {
-  cfg = cfg || APP_CONFIG;
+  cfg = cfg || getEffectiveConfig();
   document.querySelectorAll('[data-cfg="event"]').forEach((el) => {
     el.textContent = cfg.eventEmoji + cfg.eventTitle + cfg.eventEmoji;
   });
