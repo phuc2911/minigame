@@ -81,8 +81,38 @@
           </div>
         </div>
 
-        <!-- Right: Question List + Start -->
+        <!-- Right: Event Config + Question List + Start -->
         <div>
+          <details class="card" style="margin-bottom:16px">
+            <summary style="cursor:pointer;font-weight:700;font-size:1rem;list-style:none;display:flex;align-items:center;justify-content:space-between">
+              ⚙️ Cấu hình sự kiện
+              <span style="font-size:0.75rem;font-weight:400;opacity:0.55">▼ mở rộng</span>
+            </summary>
+            <div style="margin-top:14px;display:flex;flex-direction:column;gap:10px">
+              <div class="form-group" style="margin-bottom:0">
+                <label class="form-label">Tên sự kiện</label>
+                <input id="cfg-title" type="text" class="input-dark" placeholder="Minigame - Ngày hội..." maxlength="120" />
+              </div>
+              <div class="form-group" style="margin-bottom:0">
+                <label class="form-label">Slogan</label>
+                <input id="cfg-slogan" type="text" class="input-dark" placeholder="Một kết nối - ..." maxlength="160" />
+              </div>
+              <div class="form-group" style="margin-bottom:0">
+                <label class="form-label">Mô tả phụ</label>
+                <input id="cfg-subtext" type="text" class="input-dark" placeholder="Kỷ niệm 51 năm..." maxlength="300" />
+              </div>
+              <div class="form-group" style="margin-bottom:0">
+                <label class="form-label">Thời gian bắt đầu sự kiện</label>
+                <input id="cfg-starttime" type="datetime-local" class="input-dark" />
+              </div>
+              <div style="display:flex;gap:8px;margin-top:4px">
+                <button class="btn btn-green btn-sm" style="flex:1" onclick="saveEventConfig()">💾 Lưu & áp dụng</button>
+                <button class="btn btn-ghost btn-sm" onclick="resetEventConfig()">↩ Về mặc định</button>
+              </div>
+              <div id="cfg-status" style="font-size:0.82rem;display:none"></div>
+            </div>
+          </details>
+
           <div class="card" style="margin-bottom:16px">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
               <h3>Danh sách câu hỏi</h3>
