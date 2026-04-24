@@ -825,22 +825,232 @@ h3 {
   }
 }
 
-/* ─── Responsive ───────────────────────────────── */
-@media (max-width: 600px) {
-  .answer-grid {
+/* ─── Grid utility (dùng cho 2-col leaderboard/result) ─── */
+.grid-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* ─── Responsive — tablet (≤ 768px) ─────────────── */
+@media (max-width: 768px) {
+  .builder-layout {
     grid-template-columns: 1fr;
   }
-  .answer-btn {
-    min-height: 64px;
-    font-size: 1rem;
+  .host-game-layout {
+    padding: 16px;
+    gap: 14px;
   }
+}
+
+/* ─── Responsive — mobile (≤ 600px) ─────────────── */
+@media (max-width: 600px) {
+  /* Khóa viewport: dùng dvh để tránh browser-chrome che mất nội dung */
+  html,
+  body {
+    height: 100dvh;
+    overflow: hidden;
+  }
+  .screen {
+    height: 100dvh;
+    overflow: hidden; /* cố định 1 màn hình, không scroll ngoài */
+  }
+  /* Các màn hình có nội dung dài (lobby, result, gameover) cho scroll bên trong */
+  #screen-lobby > div,
+  #screen-result > div,
+  #screen-leaderboard > div,
+  #screen-gameover > div,
+  #screen-results > div,
+  #screen-gameover .screen-inner {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Navbar */
+  .navbar {
+    padding: 8px 12px;
+    flex-shrink: 0;
+  }
+  .logo-img {
+    height: 26px;
+  }
+  .btn-ghost_v2.btn-sm,
+  .btn-ghost.btn-sm {
+    padding: 5px 10px;
+    font-size: 0.75rem;
+  }
+  /* Tên event trên navbar — hiện lại, thu nhỏ, wrap 2 dòng được */
+  .navbar-title {
+    display: block;
+    font-size: 0.62rem;
+    max-width: 40%;
+    white-space: normal;
+    line-height: 1.25;
+    text-align: center;
+  }
+
+  /* Buttons */
+  .btn-lg {
+    padding: 12px 18px;
+    font-size: 0.95rem;
+    border-radius: 12px;
+  }
+  .btn-block {
+    width: 100%;
+  }
+  .home-actions {
+    flex-direction: column;
+    width: 100%;
+    max-width: 300px;
+    gap: 10px;
+  }
+  .home-actions .btn {
+    width: 100%;
+  }
+
+  /* Cards */
   .card,
   .card-white {
-    padding: 16px;
+    padding: 12px;
+    border-radius: 10px;
+  }
+
+  /* Grid 2 cột → 1 cột */
+  .grid-2col {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+  .options-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Home hero — compact để vừa 1 màn */
+  .home-hero {
+    padding: 16px 16px;
+    gap: 10px;
+  }
+  .home-hero h1 {
+    font-size: 1.6rem;
+  }
+  .home-hero [data-cfg="event"] {
+    font-size: 2rem !important;
+  }
+  .home-hero .tagline {
+    font-size: 0.88rem;
+  }
+
+  /* Join screen */
+  .join-hero-text {
+    padding: 20px 0 2px !important;
+  }
+  .join-hero-text [data-cfg="event"] {
+    font-size: 2rem !important;
+  }
+  .join-hero-text h2 {
+    font-size: 1.1rem !important;
+    margin: 2px 0 !important;
+  }
+  .join-hero-text .tagline {
+    font-size: 0.8rem !important;
+  }
+
+  /* Question header */
+  .question-header {
+    padding: 10px 12px;
+    flex-shrink: 0;
+  }
+  .question-meta {
+    font-size: 0.75rem;
+  }
+  .question-text {
+    font-size: 1rem;
+  }
+  .timer-circle {
+    width: 44px;
+    height: 44px;
+    font-size: 1.2rem;
+    border-width: 3px;
+  }
+  .score-badge {
+    font-size: 0.8rem;
+    padding: 5px 10px;
+  }
+
+  /* Answer grid — flex để tự co */
+  .answer-grid {
+    grid-template-columns: 1fr;
+    padding: 8px;
+    gap: 8px;
+    flex: 1;
+    align-content: stretch;
+  }
+  .answer-btn {
+    min-height: 0;
+    flex: 1;
+    padding: 0 14px;
+    font-size: 0.9rem;
+    gap: 10px;
+  }
+  .answer-btn .shape {
+    font-size: 1.1rem;
+  }
+
+  /* PIN display */
+  .pin-display {
+    padding: 12px 16px;
   }
   .pin-display .pin-number {
-    font-size: 3rem;
-    letter-spacing: 4px;
+    font-size: 2.4rem;
+    letter-spacing: 5px;
+  }
+
+  /* Player chip & tag */
+  .player-chip {
+    font-size: 0.82rem;
+    padding: 5px 12px;
+  }
+
+  /* Result card */
+  .result-card {
+    padding: 18px 12px;
+  }
+  .result-icon {
+    font-size: 2.4rem;
+  }
+  .result-points {
+    font-size: 1.8rem;
+  }
+
+  /* Leaderboard */
+  .lb-item {
+    padding: 8px 10px;
+    font-size: 0.85rem;
+    gap: 8px;
+  }
+  .lb-score {
+    font-size: 0.9rem;
+  }
+
+  /* Answer bar */
+  .answer-bar-bg {
+    height: 26px;
+  }
+
+  /* Builder — cho phép scroll vì form dài */
+  .builder-layout {
+    padding: 10px;
+    gap: 12px;
+    overflow-y: auto;
+  }
+  #screen-build {
+    overflow-y: auto;
+  }
+  .question-list {
+    max-height: 220px;
+  }
+  .question-item {
+    padding: 8px 10px;
+    font-size: 0.82rem;
   }
 }
 
